@@ -80,30 +80,33 @@ function renderQuestion() {
 
 // --- Result rendering ---------------------------------------------------
 
+// Every archetype routes to the same contact form (mirrors Steve's
+// Lawmatics intake). Copy still varies per tier in the eyebrow/heading/body
+// so the framing matches where the user landed.
+const CTA_CONSENT =
+  "I'd like Steve Parr's office to follow up on this assessment. I understand this isn't legal advice and I can opt out any time.";
+
 const CTA_COPY = {
   soft: {
-    variant: 'newsletter',
-    eyebrow: 'Stay sharp',
-    heading: 'One short email per quarter on BC estate planning',
-    body: "What changed in BC estate law, what most business owners are missing, and what to revisit in your own plan. No pitch, no spam. Steve writes it himself.",
-    submitLabel: 'Send it to me',
-    consent: "I'd like Steve Parr to email me his quarterly BC estate brief and the occasional follow-up. I can unsubscribe at any time.",
+    eyebrow: 'Want a second opinion?',
+    heading: 'Get in touch with the team',
+    body: "You're in great shape. If you'd like another set of eyes on what you've built, or have a question about a change coming up, tell us what's on your mind and we'll get back to you within one business day.",
+    submitLabel: 'Send message',
+    consent: CTA_CONSENT,
   },
   medium: {
-    variant: 'consult',
     eyebrow: 'Want a second set of eyes?',
     heading: 'Get in touch with the team',
     body: "You've got the basics in place. Tell us where the gaps are and we'll get back to you within one business day to figure out next steps.",
     submitLabel: 'Send message',
-    consent: "I'd like Steve Parr's office to follow up on this assessment. I understand this isn't legal advice and I can opt out any time.",
+    consent: CTA_CONSENT,
   },
   direct: {
-    variant: 'consult',
     eyebrow: "Let's get this sorted",
     heading: 'Get in touch with the team',
     body: "You're in the most exposed position. Tell us what's going on and we'll get back to you within one business day to map out next steps.",
     submitLabel: 'Send message',
-    consent: "I'd like Steve Parr's office to follow up on this assessment. I understand this isn't legal advice and I can opt out any time.",
+    consent: CTA_CONSENT,
   },
 };
 
@@ -161,96 +164,79 @@ function renderResult() {
     `).join('');
   }
 
-  // CTA card — newsletter form (email only) or full consult form by tier.
+  // CTA card — every tier renders Steve's full Lawmatics intake form.
+  // The eyebrow/heading/body copy differs per tier; the form itself is one shape.
   const ctaEl = $('[data-cta-card]');
   const archetype = describeResult(state.scored);
   const prefillMessage =
     `I just took the BC Estate Exposure Profile and came back as ` +
     `"${archetype.name}" (grade ${state.scored.grade}). I'd like to talk about next steps.`;
 
-  const formMarkup = cta.variant === 'consult'
-    ? `
-      <form data-cta-form class="consult-form">
-        <div class="form-row">
-          <label class="field">
-            <span class="field-label">First name</span>
-            <input type="text" name="firstName" autocomplete="given-name" required>
-          </label>
-          <label class="field">
-            <span class="field-label">Last name</span>
-            <input type="text" name="lastName" autocomplete="family-name" required>
-          </label>
-        </div>
-        <div class="form-row">
-          <label class="field">
-            <span class="field-label">Email</span>
-            <input type="email" name="email" autocomplete="email" required>
-          </label>
-          <label class="field">
-            <span class="field-label">Phone</span>
-            <input type="tel" name="phone" autocomplete="tel">
-            <small class="sms-disclosure">By providing your phone number, you consent to receive automated informational/conversational SMS communications from Lawmatics on behalf of Parr Business Law. Consent is not a condition of service. Message &amp; data rates may apply and frequency will vary. Reply STOP to unsubscribe. Text HELP for help.</small>
-          </label>
-        </div>
-        <label class="field">
-          <span class="field-label">Are you looking for legal support for yourself, your company, or another person or company?</span>
-          <select name="supportFor" required>
-            <option value="myself" selected>Myself</option>
-            <option value="my_company">My company</option>
-            <option value="another">Another person or company</option>
-          </select>
-        </label>
-        <label class="field">
-          <span class="field-label">What type of legal support are you looking for? Please note that we do not act in business disputes or other litigation matters.</span>
-          <select name="supportType" required>
-            <option value="business">Business</option>
-            <option value="estate_wills" selected>Estate and Wills</option>
-            <option value="probate">Probate</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-        <label class="field">
-          <span class="field-label">Please provide detail about how we can help you.</span>
-          <textarea name="message" rows="4" required>${escapeHtml(prefillMessage)}</textarea>
-        </label>
-        <label class="field">
-          <span class="field-label">How did you hear about us?</span>
-          <select name="referralSource" required>
-            <option value="" disabled selected>Select one</option>
-            <option value="professional_advisor">Professional Advisor</option>
-            <option value="current_client_referral">Referred by Current Client</option>
-            <option value="google">Google</option>
-            <option value="facebook">Facebook</option>
-            <option value="instagram">Instagram</option>
-            <option value="linkedin">LinkedIn</option>
-          </select>
-        </label>
-        <label class="consent">
-          <input type="checkbox" name="consent" required>
-          <span>${escapeHtml(cta.consent)}</span>
-        </label>
-        <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
-      </form>
-    `
-    : `
-      <form data-cta-form>
-        <div class="form-row">
-          <input type="text"  name="firstName" placeholder="First name" autocomplete="given-name" required>
-          <input type="email" name="email"     placeholder="you@example.com" autocomplete="email" required>
-        </div>
-        <label class="consent">
-          <input type="checkbox" name="consent" required>
-          <span>${escapeHtml(cta.consent)}</span>
-        </label>
-        <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
-      </form>
-    `;
-
   ctaEl.innerHTML = `
     <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
     <h3>${escapeHtml(cta.heading)}</h3>
     <p>${escapeHtml(cta.body)}</p>
-    ${formMarkup}
+    <form data-cta-form class="consult-form">
+      <div class="form-row">
+        <label class="field">
+          <span class="field-label">First name</span>
+          <input type="text" name="firstName" autocomplete="given-name" required>
+        </label>
+        <label class="field">
+          <span class="field-label">Last name</span>
+          <input type="text" name="lastName" autocomplete="family-name" required>
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="field">
+          <span class="field-label">Email</span>
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label class="field">
+          <span class="field-label">Phone</span>
+          <input type="tel" name="phone" autocomplete="tel">
+          <small class="sms-disclosure">By providing your phone number, you consent to receive automated informational/conversational SMS communications from Lawmatics on behalf of Parr Business Law. Consent is not a condition of service. Message &amp; data rates may apply and frequency will vary. Reply STOP to unsubscribe. Text HELP for help.</small>
+        </label>
+      </div>
+      <label class="field">
+        <span class="field-label">Are you looking for legal support for yourself, your company, or another person or company?</span>
+        <select name="supportFor" required>
+          <option value="myself" selected>Myself</option>
+          <option value="my_company">My company</option>
+          <option value="another">Another person or company</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">What type of legal support are you looking for? Please note that we do not act in business disputes or other litigation matters.</span>
+        <select name="supportType" required>
+          <option value="business">Business</option>
+          <option value="estate_wills" selected>Estate and Wills</option>
+          <option value="probate">Probate</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">Please provide detail about how we can help you.</span>
+        <textarea name="message" rows="4" required>${escapeHtml(prefillMessage)}</textarea>
+      </label>
+      <label class="field">
+        <span class="field-label">How did you hear about us?</span>
+        <select name="referralSource" required>
+          <option value="" disabled selected>Select one</option>
+          <option value="professional_advisor">Professional Advisor</option>
+          <option value="current_client_referral">Referred by Current Client</option>
+          <option value="google">Google</option>
+          <option value="facebook">Facebook</option>
+          <option value="instagram">Instagram</option>
+          <option value="linkedin">LinkedIn</option>
+        </select>
+      </label>
+      <label class="consent">
+        <input type="checkbox" name="consent" required>
+        <span>${escapeHtml(cta.consent)}</span>
+      </label>
+      <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
+    </form>
   `;
 
   $('[data-cta-form]', ctaEl).addEventListener('submit', async (e) => {
@@ -275,13 +261,10 @@ function renderResult() {
     });
     logEvent({ sessionId: state.sessionId, event: 'opted_in', meta: { tier } });
 
-    const thanksBody = cta.variant === 'consult'
-      ? `<p class="cta-thanks">Got it, ${escapeHtml(data.firstName)}. Steve's office will get back to you within one business day.</p>`
-      : `<p class="cta-thanks">Subscribed. Your first issue will land soon.</p>`;
     ctaEl.innerHTML = `
       <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
       <h3>Thanks, ${escapeHtml(data.firstName)}.</h3>
-      ${thanksBody}
+      <p class="cta-thanks">Steve's office will get back to you within one business day.</p>
     `;
   });
 }
