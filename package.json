@@ -1,0 +1,10 @@
+{
+  "name": "parr-estate-profile",
+  "version": "0.1.0",
+  "description": "BC Estate Exposure Profile — interactive lead-gen tool for Parr Business Law.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/"
+  }
+}

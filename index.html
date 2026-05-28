@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The BC Estate Exposure Profile · Parr Business Law</title>
+  <meta name="description" content="A 5-minute assessment that shows where you stand on BC estate planning — and what it could cost your family.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="https://www.parrbusinesslaw.com/" target="_blank" rel="noopener">
+      <span class="brand-mark">PBL</span>
+      <span class="brand-name">Parr Business Law</span>
+    </a>
+    <nav class="site-nav">
+      <a href="https://www.parrbusinesslaw.com/" target="_blank" rel="noopener">Back to site</a>
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- INTRO -->
+    <section id="intro" class="screen active" aria-labelledby="intro-heading">
+      <div class="container narrow">
+        <p class="eyebrow">For BC business owners + professionals</p>
+        <h1 id="intro-heading">How exposed is your estate, really?</h1>
+        <p class="lede">
+          A 5-minute assessment. Ten questions. You'll see where you actually stand
+          on the seven dimensions that decide what your family pays —
+          or doesn't pay — when something happens.
+        </p>
+
+        <ul class="proof">
+          <li>Free. No login. Your answers stay private.</li>
+          <li>BC-specific — uses the Probate Fee Act math.</li>
+          <li>Built by Steve Parr, founder of Parr Business Law.</li>
+        </ul>
+
+        <button class="cta primary" data-action="start">Begin assessment →</button>
+
+        <p class="micro">
+          You'll see your archetype, your exposure grade, and an estimate of
+          what BC probate could cost your family.
+        </p>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="screen" aria-labelledby="quiz-heading">
+      <div class="container narrow">
+        <div class="progress">
+          <div class="progress-track"><div class="progress-fill" data-progress-fill></div></div>
+          <div class="progress-label">
+            Question <span data-current>1</span> of <span data-total>10</span>
+          </div>
+        </div>
+
+        <div id="question-host" aria-live="polite"></div>
+
+        <div class="quiz-controls">
+          <button class="cta ghost" data-action="back">← Back</button>
+          <button class="cta primary" data-action="next" disabled>Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="screen" aria-labelledby="result-heading">
+      <div class="container">
+        <header class="result-header">
+          <p class="eyebrow" data-result-tier>Your archetype</p>
+          <h2 id="result-heading" data-result-archetype-name>—</h2>
+          <p class="grade-line">
+            Exposure grade: <strong class="grade" data-result-grade>—</strong>
+          </p>
+          <p class="archetype-blurb" data-result-blurb>—</p>
+          <p class="cap-note" data-result-cap-note hidden></p>
+        </header>
+
+        <div class="result-grid">
+          <article class="card probate-card">
+            <p class="eyebrow">What BC probate could cost your family</p>
+            <p class="probate-figure">
+              <span data-probate-low>—</span><span class="probate-sep">–</span><span data-probate-high>—</span>
+            </p>
+            <p class="probate-note">
+              Estimated range based on your estate value and your reported probate exposure.
+              BC charges roughly 1.4% on assets above $50,000 that pass through probate —
+              a structured plan can reduce or eliminate this.
+            </p>
+          </article>
+
+          <article class="card gaps-card" data-gaps-card>
+            <p class="eyebrow">Where you're most exposed</p>
+            <ol class="gap-list" data-gap-list></ol>
+          </article>
+
+          <article class="card cta-card" data-cta-card>
+            <!-- populated by app.js based on grade tier -->
+          </article>
+        </div>
+
+        <button class="cta ghost restart" data-action="restart">Retake assessment</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      © Parr Business Law · 800 – 525 West 8th Ave., Vancouver BC ·
+      <a href="https://www.parrbusinesslaw.com/" target="_blank" rel="noopener">parrbusinesslaw.com</a>
+    </p>
+    <p class="disclaimer">
+      This assessment is for educational purposes only and is not legal advice.
+      For advice on your specific situation, book a consult with Steve Parr.
+    </p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
