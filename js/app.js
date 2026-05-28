@@ -85,25 +85,25 @@ const CTA_COPY = {
     variant: 'newsletter',
     eyebrow: 'Stay sharp',
     heading: 'One short email per quarter on BC estate planning',
-    body: "What changed in BC estate law, what most business owners are missing, and what to revisit in your own plan. No pitch, no spam — Steve writes it himself.",
+    body: "What changed in BC estate law, what most business owners are missing, and what to revisit in your own plan. No pitch, no spam. Steve writes it himself.",
     submitLabel: 'Send it to me',
     consent: "I'd like Steve Parr to email me his quarterly BC estate brief and the occasional follow-up. I can unsubscribe at any time.",
   },
   medium: {
     variant: 'consult',
     eyebrow: 'Want a second set of eyes?',
-    heading: 'Book a free 15-minute readiness review',
-    body: "We'll walk through your top exposures together and you'll leave with one or two concrete next steps. It's not a sales call — it's a sanity check.",
+    heading: 'Get in touch with the team',
+    body: "You've got the basics in place. Tell us where the gaps are and we'll get back to you within one business day to figure out next steps.",
     submitLabel: 'Send message',
-    consent: "I'd like Steve Parr's office to contact me about a free readiness review. I understand this isn't legal advice and I can opt out any time.",
+    consent: "I'd like Steve Parr's office to follow up on this assessment. I understand this isn't legal advice and I can opt out any time.",
   },
   direct: {
     variant: 'consult',
-    eyebrow: "Let's actually fix this",
-    heading: 'Book a consult with Steve Parr',
-    body: "The state you're in is the most expensive place to be when something happens. A consult is the fastest way out — Steve will cover what to lock down first, what's BC-specific, and how to keep your family from absorbing avoidable costs.",
+    eyebrow: "Let's get this sorted",
+    heading: 'Get in touch with the team',
+    body: "You're in the most exposed position. Tell us what's going on and we'll get back to you within one business day to map out next steps.",
     submitLabel: 'Send message',
-    consent: "I'd like Steve Parr's office to contact me about booking a consult. I understand this isn't legal advice and I can opt out any time.",
+    consent: "I'd like Steve Parr's office to follow up on this assessment. I understand this isn't legal advice and I can opt out any time.",
   },
 };
 
@@ -129,14 +129,14 @@ function renderResult() {
   if (state.scored.gaming_capped) {
     capEl.textContent =
       "Heads up: you marked things as well-handled, but it's been 5+ years " +
-      "since your last review. We've lowered the grade — plans drift, life " +
-      "changes, and the law changes. Worth a fresh look.";
+      "since your last review. We've lowered the grade because plans drift, " +
+      "life changes, and the law changes. Worth a fresh look.";
     capEl.hidden = false;
   } else if (state.scored.coherence_capped) {
     capEl.textContent =
-      "Heads up: your answers spanned a wide range — strong in some areas, " +
+      "Heads up: your answers spanned a wide range. Strong in some areas, " +
       "exposed in others. We've lowered the grade because a partially-handled " +
-      "estate is more like an exposed one than a structured one.";
+      "estate behaves more like an exposed one than a structured one.";
     capEl.hidden = false;
   } else {
     capEl.hidden = true;
@@ -243,7 +243,7 @@ function renderResult() {
     logEvent({ sessionId: state.sessionId, event: 'opted_in', meta: { tier } });
 
     const thanksBody = cta.variant === 'consult'
-      ? `<p class="cta-thanks">Got it, ${escapeHtml(data.firstName)}. Steve's office will reach out within one business day to set up a time.</p>`
+      ? `<p class="cta-thanks">Got it, ${escapeHtml(data.firstName)}. Steve's office will get back to you within one business day.</p>`
       : `<p class="cta-thanks">Subscribed. Your first issue will land soon.</p>`;
     ctaEl.innerHTML = `
       <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
@@ -263,10 +263,10 @@ function gapCopy(dimension, severity) {
       ? 'No documented POA. If you’re incapacitated tomorrow, your family is improvising.'
       : 'POA exists but the people involved aren’t fully briefed.',
     beneficiaries: high
-      ? 'Beneficiary designations are unknown or out of date — these override your will.'
+      ? 'Beneficiary designations are unknown or out of date. These override your will.'
       : 'Beneficiaries are named but may not match your current intent.',
     probate_exposure: high
-      ? 'Most of your assets would pass through BC probate at ~1.4% — likely avoidable.'
+      ? 'Most of your assets would pass through BC probate at ~1.4%. Likely avoidable.'
       : 'Some probate exposure exists. A few structural changes can shrink it significantly.',
     document_accessibility: high
       ? 'Your family would spend weeks finding the right paperwork. Costs delays and decisions.'
@@ -275,7 +275,7 @@ function gapCopy(dimension, severity) {
       ? 'Guardianship and financial support for dependents aren’t formalized.'
       : 'Guardianship designated but the structure could be tighter.',
     business_succession: high
-      ? 'Business assets have no documented succession plan — partners and family at risk.'
+      ? 'Business assets have no documented succession plan. Partners and family are at risk.'
       : 'A succession outline exists but isn’t funded or formally signed.',
   };
   return map[dimension] || '';
