@@ -189,11 +189,41 @@ function renderResult() {
           <label class="field">
             <span class="field-label">Phone</span>
             <input type="tel" name="phone" autocomplete="tel">
+            <small class="sms-disclosure">By providing your phone number, you consent to receive automated informational/conversational SMS communications from Lawmatics on behalf of Parr Business Law. Consent is not a condition of service. Message &amp; data rates may apply and frequency will vary. Reply STOP to unsubscribe. Text HELP for help.</small>
           </label>
         </div>
         <label class="field">
-          <span class="field-label">Message</span>
+          <span class="field-label">Are you looking for legal support for yourself, your company, or another person or company?</span>
+          <select name="supportFor" required>
+            <option value="myself" selected>Myself</option>
+            <option value="my_company">My company</option>
+            <option value="another">Another person or company</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">What type of legal support are you looking for? Please note that we do not act in business disputes or other litigation matters.</span>
+          <select name="supportType" required>
+            <option value="business">Business</option>
+            <option value="estate_wills" selected>Estate and Wills</option>
+            <option value="probate">Probate</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Please provide detail about how we can help you.</span>
           <textarea name="message" rows="4" required>${escapeHtml(prefillMessage)}</textarea>
+        </label>
+        <label class="field">
+          <span class="field-label">How did you hear about us?</span>
+          <select name="referralSource" required>
+            <option value="" disabled selected>Select one</option>
+            <option value="professional_advisor">Professional Advisor</option>
+            <option value="current_client_referral">Referred by Current Client</option>
+            <option value="google">Google</option>
+            <option value="facebook">Facebook</option>
+            <option value="instagram">Instagram</option>
+            <option value="linkedin">LinkedIn</option>
+          </select>
         </label>
         <label class="consent">
           <input type="checkbox" name="consent" required>
@@ -237,6 +267,9 @@ function renderResult() {
       lastName: data.lastName || null,
       phone: data.phone || null,
       message: data.message || null,
+      supportFor: data.supportFor || null,
+      supportType: data.supportType || null,
+      referralSource: data.referralSource || null,
       ctaTier: tier,
       consent: !!data.consent,
     });

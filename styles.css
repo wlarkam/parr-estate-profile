@@ -402,7 +402,8 @@ p { margin: 0 0 1rem; }
 .cta-card input[type="email"],
 .cta-card input[type="text"],
 .cta-card input[type="tel"],
-.cta-card textarea {
+.cta-card textarea,
+.cta-card select {
   width: 100%;
   padding: 0.85rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -414,13 +415,34 @@ p { margin: 0 0 1rem; }
   box-sizing: border-box;
 }
 .cta-card textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
+.cta-card select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+.cta-card select option { background: var(--color-navy-deep); color: #fff; }
 .cta-card input::placeholder,
 .cta-card textarea::placeholder { color: rgba(255, 255, 255, 0.55); }
 .cta-card input:focus,
-.cta-card textarea:focus {
+.cta-card textarea:focus,
+.cta-card select:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.12);
+}
+
+.cta-card .sms-disclosure {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.005em;
 }
 .cta-card label.consent {
   display: flex;

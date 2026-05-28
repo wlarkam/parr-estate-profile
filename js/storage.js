@@ -73,7 +73,9 @@ export async function logEvent({ sessionId, event, meta = {} }) {
 }
 
 export async function captureContact({
-  responseId, email, firstName, lastName, phone, message, ctaTier, consent,
+  responseId, email, firstName, lastName, phone, message,
+  supportFor, supportType, referralSource,
+  ctaTier, consent,
 }) {
   // 1) Write to Supabase — Warren owns this list regardless of Kit state.
   try {
@@ -83,10 +85,13 @@ export async function captureContact({
       body: JSON.stringify({
         response_id: responseId,
         email,
-        first_name: firstName || null,
-        last_name:  lastName  || null,
-        phone:      phone     || null,
-        message:    message   || null,
+        first_name:      firstName      || null,
+        last_name:       lastName       || null,
+        phone:           phone          || null,
+        message:         message        || null,
+        support_for:     supportFor     || null,
+        support_type:    supportType    || null,
+        referral_source: referralSource || null,
         cta_tier: ctaTier,
         consent_outreach: !!consent,
       }),

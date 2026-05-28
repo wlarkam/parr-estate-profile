@@ -33,7 +33,7 @@ export const QUESTIONS = [
     type: 'scored',
     dimension: 'power_of_attorney',
     prompt:
-      'If you were hospitalized tomorrow and unable to make decisions for two weeks, what actually happens?',
+      'If you were hospitalized tomorrow and unable to make decisions for two weeks, what happens?',
     options: [
       { value: 'A', label: 'My POA is documented and they know exactly what to do' },
       { value: 'B', label: "I have a POA in place, and they'd figure it out from my docs" },
@@ -64,7 +64,7 @@ export const QUESTIONS = [
       { value: 'A', label: "I've intentionally structured most of it to avoid probate" },
       { value: 'B', label: "Significant chunks bypass probate, but I'm not sure about everything" },
       { value: 'C', label: "I think my house and accounts go through probate. Haven't mapped it." },
-      { value: 'F', label: "I'm not sure what probate would actually cost my estate" },
+      { value: 'F', label: "I'm not sure what probate would cost my estate" },
     ],
   },
   {
