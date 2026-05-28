@@ -59,7 +59,7 @@ export const QUESTIONS = [
     type: 'scored',
     dimension: 'probate_exposure',
     prompt:
-      'If you died tomorrow, what portion of your assets would pass through BC probate vs. avoid it (joint tenancy, designated beneficiaries, trust)?',
+      'Of your current assets, roughly what portion would pass through BC probate vs. avoid it (joint tenancy, designated beneficiaries, trust)?',
     options: [
       { value: 'A', label: "I've intentionally structured most of it to avoid probate" },
       { value: 'B', label: "Significant chunks bypass probate, but I'm not sure about everything" },

@@ -2,12 +2,12 @@
    navy + white, modern professional, warm. */
 
 :root {
-  --color-navy:        #0a2540;
-  --color-navy-deep:   #061a30;
-  --color-navy-soft:   #1a3553;
+  --color-navy:        #2c3877;
+  --color-navy-deep:   #1e2655;
+  --color-navy-soft:   #3a4685;
   --color-bg:          #ffffff;
   --color-bg-tint:     #f7f9fc;
-  --color-ink:         #0a2540;
+  --color-ink:         #2c3877;
   --color-ink-muted:   #4a5e7a;
   --color-line:        #dde4ee;
   --color-accent:      #b78a4d;   /* warm gold for emphasis */
@@ -18,9 +18,9 @@
 
   --radius:            14px;
   --radius-sm:         8px;
-  --shadow-sm:         0 1px 2px rgba(10, 37, 64, 0.04);
-  --shadow:            0 4px 18px rgba(10, 37, 64, 0.06);
-  --shadow-lg:         0 12px 40px rgba(10, 37, 64, 0.10);
+  --shadow-sm:         0 1px 2px rgba(44, 56, 119, 0.04);
+  --shadow:            0 4px 18px rgba(44, 56, 119, 0.06);
+  --shadow-lg:         0 12px 40px rgba(44, 56, 119, 0.10);
 
   --font-sans:         "Inter", "Helvetica Neue", Helvetica, Arial, system-ui, -apple-system, sans-serif;
   --font-serif:        "Source Serif 4", Georgia, serif;
@@ -87,43 +87,31 @@ p { margin: 0 0 1rem; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 1.75rem;
-  border-bottom: 1px solid var(--color-line);
-  background: var(--color-bg);
+  padding: 1.1rem 1.75rem;
+  background: var(--color-navy);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  text-decoration: none;
-  color: var(--color-navy);
-  font-weight: 600;
-}
-.brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
+.brand { display: inline-flex; align-items: center; text-decoration: none; }
+.brand-logo {
+  display: block;
   height: 36px;
-  background: var(--color-navy);
-  color: #fff;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  font-weight: 700;
+  width: auto;
+  /* The public Parr horizontal logo is white-on-transparent; pairs with
+     the navy header band. Drop a dark variant into assets/parr-logo.png
+     to use on a light header instead. */
 }
-.brand-name { font-size: 0.95rem; }
 
 .site-nav a {
   font-size: 0.9rem;
-  color: var(--color-ink-muted);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
-.site-nav a:hover { color: var(--color-navy); }
+.site-nav a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
 
 .site-footer {
   border-top: 1px solid var(--color-line);
@@ -400,10 +388,22 @@ p { margin: 0 0 1rem; }
 }
 .cta-card .cta.primary:hover { background: var(--color-bg-tint); }
 
-.cta-card form .form-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.5rem 0; }
+.cta-card form .form-row { display: flex; gap: 0.85rem; flex-wrap: wrap; margin: 0.5rem 0; }
+.cta-card .field { display: block; flex: 1 1 200px; margin: 0.65rem 0; }
+.cta-card .field-label {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
 .cta-card input[type="email"],
-.cta-card input[type="text"] {
-  flex: 1 1 200px;
+.cta-card input[type="text"],
+.cta-card input[type="tel"],
+.cta-card textarea {
+  width: 100%;
   padding: 0.85rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(255, 255, 255, 0.08);
@@ -411,8 +411,17 @@ p { margin: 0 0 1rem; }
   border-radius: var(--radius-sm);
   font-family: var(--font-sans);
   font-size: 0.95rem;
+  box-sizing: border-box;
 }
-.cta-card input::placeholder { color: rgba(255, 255, 255, 0.55); }
+.cta-card textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
+.cta-card input::placeholder,
+.cta-card textarea::placeholder { color: rgba(255, 255, 255, 0.55); }
+.cta-card input:focus,
+.cta-card textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+}
 .cta-card label.consent {
   display: flex;
   align-items: flex-start;

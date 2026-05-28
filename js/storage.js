@@ -72,7 +72,9 @@ export async function logEvent({ sessionId, event, meta = {} }) {
   } catch { /* fire-and-forget */ }
 }
 
-export async function captureContact({ responseId, email, firstName, ctaTier, consent }) {
+export async function captureContact({
+  responseId, email, firstName, lastName, phone, message, ctaTier, consent,
+}) {
   // 1) Write to Supabase — Warren owns this list regardless of Kit state.
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/parr_contacts`, {
@@ -82,6 +84,9 @@ export async function captureContact({ responseId, email, firstName, ctaTier, co
         response_id: responseId,
         email,
         first_name: firstName || null,
+        last_name:  lastName  || null,
+        phone:      phone     || null,
+        message:    message   || null,
         cta_tier: ctaTier,
         consent_outreach: !!consent,
       }),

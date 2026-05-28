@@ -82,6 +82,7 @@ function renderQuestion() {
 
 const CTA_COPY = {
   soft: {
+    variant: 'newsletter',
     eyebrow: 'Stay sharp',
     heading: 'One short email per quarter on BC estate planning',
     body: "What changed in BC estate law, what most business owners are missing, and what to revisit in your own plan. No pitch, no spam — Steve writes it himself.",
@@ -89,20 +90,20 @@ const CTA_COPY = {
     consent: "I'd like Steve Parr to email me his quarterly BC estate brief and the occasional follow-up. I can unsubscribe at any time.",
   },
   medium: {
+    variant: 'consult',
     eyebrow: 'Want a second set of eyes?',
     heading: 'Book a free 15-minute readiness review',
     body: "We'll walk through your top exposures together and you'll leave with one or two concrete next steps. It's not a sales call — it's a sanity check.",
-    submitLabel: 'Send me the booking link',
-    consent: "Email me the link to book a 15-minute readiness review with Steve, and follow up if I don't book within a week. I can unsubscribe any time.",
-    booking: true,
+    submitLabel: 'Send message',
+    consent: "I'd like Steve Parr's office to contact me about a free readiness review. I understand this isn't legal advice and I can opt out any time.",
   },
   direct: {
+    variant: 'consult',
     eyebrow: "Let's actually fix this",
     heading: 'Book a consult with Steve Parr',
     body: "The state you're in is the most expensive place to be when something happens. A consult is the fastest way out — Steve will cover what to lock down first, what's BC-specific, and how to keep your family from absorbing avoidable costs.",
-    submitLabel: 'Send me Steve\'s booking link',
-    consent: "Email me Steve's booking link and a short note on what to expect on the consult. I can unsubscribe any time.",
-    booking: true,
+    submitLabel: 'Send message',
+    consent: "I'd like Steve Parr's office to contact me about booking a consult. I understand this isn't legal advice and I can opt out any time.",
   },
 };
 
@@ -160,23 +161,66 @@ function renderResult() {
     `).join('');
   }
 
-  // CTA card
+  // CTA card — newsletter form (email only) or full consult form by tier.
   const ctaEl = $('[data-cta-card]');
+  const archetype = describeResult(state.scored);
+  const prefillMessage =
+    `I just took the BC Estate Exposure Profile and came back as ` +
+    `"${archetype.name}" (grade ${state.scored.grade}). I'd like to talk about next steps.`;
+
+  const formMarkup = cta.variant === 'consult'
+    ? `
+      <form data-cta-form class="consult-form">
+        <div class="form-row">
+          <label class="field">
+            <span class="field-label">First name</span>
+            <input type="text" name="firstName" autocomplete="given-name" required>
+          </label>
+          <label class="field">
+            <span class="field-label">Last name</span>
+            <input type="text" name="lastName" autocomplete="family-name" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="field">
+            <span class="field-label">Email</span>
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+          <label class="field">
+            <span class="field-label">Phone</span>
+            <input type="tel" name="phone" autocomplete="tel">
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">Message</span>
+          <textarea name="message" rows="4" required>${escapeHtml(prefillMessage)}</textarea>
+        </label>
+        <label class="consent">
+          <input type="checkbox" name="consent" required>
+          <span>${escapeHtml(cta.consent)}</span>
+        </label>
+        <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
+      </form>
+    `
+    : `
+      <form data-cta-form>
+        <div class="form-row">
+          <input type="text"  name="firstName" placeholder="First name" autocomplete="given-name" required>
+          <input type="email" name="email"     placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <label class="consent">
+          <input type="checkbox" name="consent" required>
+          <span>${escapeHtml(cta.consent)}</span>
+        </label>
+        <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
+      </form>
+    `;
+
   ctaEl.innerHTML = `
     <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
     <h3>${escapeHtml(cta.heading)}</h3>
     <p>${escapeHtml(cta.body)}</p>
-    <form data-cta-form>
-      <div class="form-row">
-        <input type="text"  name="firstName" placeholder="First name" autocomplete="given-name" required>
-        <input type="email" name="email"     placeholder="you@example.com" autocomplete="email" required>
-      </div>
-      <label class="consent">
-        <input type="checkbox" name="consent" required>
-        <span>${escapeHtml(cta.consent)}</span>
-      </label>
-      <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
-    </form>
+    ${formMarkup}
   `;
 
   $('[data-cta-form]', ctaEl).addEventListener('submit', async (e) => {
@@ -190,19 +234,21 @@ function renderResult() {
       responseId: state.responseId,
       email: data.email,
       firstName: data.firstName,
+      lastName: data.lastName || null,
+      phone: data.phone || null,
+      message: data.message || null,
       ctaTier: tier,
       consent: !!data.consent,
     });
     logEvent({ sessionId: state.sessionId, event: 'opted_in', meta: { tier } });
 
-    // Show success state. For booking tiers, point to Steve's calendar.
-    const thanks = cta.booking
-      ? `<p class="cta-thanks">Sent. Check your inbox — and if you'd like, you can <a href="${STEVE_BOOKING_URL}" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;">book directly with Steve here</a>.</p>`
-      : `<p class="cta-thanks">Sent. You'll hear from Steve soon.</p>`;
+    const thanksBody = cta.variant === 'consult'
+      ? `<p class="cta-thanks">Got it, ${escapeHtml(data.firstName)}. Steve's office will reach out within one business day to set up a time.</p>`
+      : `<p class="cta-thanks">Subscribed. Your first issue will land soon.</p>`;
     ctaEl.innerHTML = `
       <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
       <h3>Thanks, ${escapeHtml(data.firstName)}.</h3>
-      ${thanks}
+      ${thanksBody}
     `;
   });
 }
