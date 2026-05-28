@@ -195,7 +195,6 @@ function renderResult() {
         <label class="field">
           <span class="field-label">Phone</span>
           <input type="tel" name="phone" autocomplete="tel">
-          <small class="sms-disclosure">By providing your phone number, you consent to receive automated informational/conversational SMS communications from Lawmatics on behalf of Parr Business Law. Consent is not a condition of service. Message &amp; data rates may apply and frequency will vary. Reply STOP to unsubscribe. Text HELP for help.</small>
         </label>
       </div>
       <label class="field">
