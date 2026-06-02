@@ -3,9 +3,7 @@ import { scoreResponse, describeResult } from './scoring.js';
 import { estimateProbateRange } from './probate.js';
 import {
   submitResponse,
-  captureContact,
   logEvent,
-  STEVE_BOOKING_URL,
 } from './storage.js';
 
 const state = {
@@ -164,108 +162,15 @@ function renderResult() {
     `).join('');
   }
 
-  // CTA card — every tier renders Steve's full Lawmatics intake form.
-  // The eyebrow/heading/body copy differs per tier; the form itself is one shape.
+  // CTA card — per-tier framing copy only. The actual lead-capture form is
+  // Steve's existing Lawmatics widget, embedded below this card. Submissions
+  // flow into his real CRM intake, not into our Supabase.
   const ctaEl = $('[data-cta-card]');
-  const archetype = describeResult(state.scored);
-  const prefillMessage =
-    `I just took the BC Estate Exposure Profile and came back as ` +
-    `"${archetype.name}" (grade ${state.scored.grade}). I'd like to talk about next steps.`;
-
   ctaEl.innerHTML = `
     <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
     <h3>${escapeHtml(cta.heading)}</h3>
     <p>${escapeHtml(cta.body)}</p>
-    <form data-cta-form class="consult-form">
-      <div class="form-row">
-        <label class="field">
-          <span class="field-label">First name</span>
-          <input type="text" name="firstName" autocomplete="given-name" required>
-        </label>
-        <label class="field">
-          <span class="field-label">Last name</span>
-          <input type="text" name="lastName" autocomplete="family-name" required>
-        </label>
-      </div>
-      <div class="form-row">
-        <label class="field">
-          <span class="field-label">Email</span>
-          <input type="email" name="email" autocomplete="email" required>
-        </label>
-        <label class="field">
-          <span class="field-label">Phone</span>
-          <input type="tel" name="phone" autocomplete="tel">
-        </label>
-      </div>
-      <label class="field">
-        <span class="field-label">Are you looking for legal support for yourself, your company, or another person or company?</span>
-        <select name="supportFor" required>
-          <option value="myself" selected>Myself</option>
-          <option value="my_company">My company</option>
-          <option value="another">Another person or company</option>
-        </select>
-      </label>
-      <label class="field">
-        <span class="field-label">What type of legal support are you looking for? Please note that we do not act in business disputes or other litigation matters.</span>
-        <select name="supportType" required>
-          <option value="business">Business</option>
-          <option value="estate_wills" selected>Estate and Wills</option>
-          <option value="probate">Probate</option>
-          <option value="other">Other</option>
-        </select>
-      </label>
-      <label class="field">
-        <span class="field-label">Please provide detail about how we can help you.</span>
-        <textarea name="message" rows="4" required>${escapeHtml(prefillMessage)}</textarea>
-      </label>
-      <label class="field">
-        <span class="field-label">How did you hear about us?</span>
-        <select name="referralSource" required>
-          <option value="" disabled selected>Select one</option>
-          <option value="professional_advisor">Professional Advisor</option>
-          <option value="current_client_referral">Referred by Current Client</option>
-          <option value="google">Google</option>
-          <option value="facebook">Facebook</option>
-          <option value="instagram">Instagram</option>
-          <option value="linkedin">LinkedIn</option>
-        </select>
-      </label>
-      <label class="consent">
-        <input type="checkbox" name="consent" required>
-        <span>${escapeHtml(cta.consent)}</span>
-      </label>
-      <button type="submit" class="cta primary">${escapeHtml(cta.submitLabel)}</button>
-    </form>
   `;
-
-  $('[data-cta-form]', ctaEl).addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target).entries());
-    const btn = $('button[type="submit"]', e.target);
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-
-    await captureContact({
-      responseId: state.responseId,
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName || null,
-      phone: data.phone || null,
-      message: data.message || null,
-      supportFor: data.supportFor || null,
-      supportType: data.supportType || null,
-      referralSource: data.referralSource || null,
-      ctaTier: tier,
-      consent: !!data.consent,
-    });
-    logEvent({ sessionId: state.sessionId, event: 'opted_in', meta: { tier } });
-
-    ctaEl.innerHTML = `
-      <p class="eyebrow">${escapeHtml(cta.eyebrow)}</p>
-      <h3>Thanks, ${escapeHtml(data.firstName)}.</h3>
-      <p class="cta-thanks">Steve's office will get back to you within one business day.</p>
-    `;
-  });
 }
 
 function gapCopy(dimension, severity) {

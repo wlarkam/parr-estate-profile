@@ -98,9 +98,26 @@
           </article>
 
           <article class="card cta-card" data-cta-card>
-            <!-- populated by app.js based on grade tier -->
+            <!-- per-tier framing populated by app.js -->
           </article>
         </div>
+
+        <!-- Steve's existing Lawmatics intake form, embedded verbatim.
+             Submissions land in his CRM via the same flow his current
+             parrbusinesslaw.com/contact form uses. -->
+        <section class="lm-embed">
+          <p class="lm-embed-note">
+            Ready to talk? Get in touch using the form below and Steve's office
+            will get back to you within one business day.
+          </p>
+          <div class="lm-embed-frame">
+            <!-- Start Lawmatics Embedded Snippet -->
+            <script>
+              !function(e,t,n,a,s,c,i){if(!e[s]){i=e[s]=function(){i.process?i.process.apply(i,arguments):i.queue.push(arguments)},i.queue=[],i.t=1*new Date;var o=t.createElement(n);o.async=1,o.src=a+"?t="+Math.ceil(new Date/c)*c;var r=t.getElementsByTagName(n)[0];r.parentNode.insertBefore(o,r)}}(window,document,"script","https://navi.lawmatics.com/intake.min.js","lm_intake",864e5),lm_intake("181a8cbb-d10b-402d-b68e-a4693712b38a", "lm-embedded-script", {});
+            </script>
+            <!-- End Lawmatics Embedded Snippet -->
+          </div>
+        </section>
 
         <button class="cta ghost restart" data-action="restart">Retake assessment</button>
       </div>

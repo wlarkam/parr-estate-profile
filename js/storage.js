@@ -1,16 +1,36 @@
-// Supabase + Kit integration. Anon-insert-only — RLS guards the tables.
-// Publishable keys are safe to ship to the browser.
+// Supabase + Lawmatics integration. Both writes fire in parallel from the
+// browser. Supabase is the source of truth (RLS-guarded anon insert);
+// Lawmatics is Steve's existing CRM intake so leads flow into the workflow
+// his assistant already uses.
 
 const SUPABASE_URL = 'https://rbedklytopejtogpsefg.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_8VdVe5T9zW241p4yp7aodg_fxwXzlIJ';
 
-// Kit integration — fill these in once Steve's nurture forms exist in Kit.
-// Create one form per tier under Kit → Grow → Landing Pages & Forms.
-// The form ID is the integer in the public form URL.
-export const KIT_FORM_IDS = {
-  soft:   null, // quarterly BC estate brief (A/B tier)
-  medium: null, // readiness audit call (C/D tier)
-  direct: null, // book-a-consult heat list (F tier)
+// Steve's Lawmatics "EXT | PBL | Website Form" — public intake endpoint.
+// CORS is open (access-control-allow-origin: *), no auth header required.
+const LAWMATICS_FORM_ID = '181a8cbb-d10b-402d-b68e-a4693712b38a';
+const LAWMATICS_SUBMIT_URL = `https://api.lawmatics.com/v1/forms/${LAWMATICS_FORM_ID}/submit`;
+
+// Option IDs are Lawmatics-side numeric IDs that map our internal values
+// onto Steve's dropdown options. From Form API Details panel in his Lawmatics.
+const LAWMATICS_SUPPORT_FOR = {       // custom_field_583330
+  myself:     521206,
+  my_company: 521207,
+  another:    521208,
+};
+const LAWMATICS_SUPPORT_TYPE = {      // custom_field_536359
+  business:     465679,
+  estate_wills: 465680,
+  probate:      585239,
+  other:        465681,
+};
+const LAWMATICS_REFERRAL_SOURCE = {   // custom_field_635773
+  professional_advisor:    585855,
+  current_client_referral: 585856,
+  google:                  585859,
+  facebook:                585858,
+  instagram:               585863,
+  linkedin:                585860,
 };
 
 // Steve's booking URL — verify against his "BOOK A CONSULT" CTA target.
@@ -72,12 +92,20 @@ export async function logEvent({ sessionId, event, meta = {} }) {
   } catch { /* fire-and-forget */ }
 }
 
-export async function captureContact({
+export async function captureContact(contact) {
+  // Fire both writes in parallel. Lawmatics failure must not block the
+  // Supabase write, and vice versa — we always want at least one record.
+  await Promise.allSettled([
+    writeContactToSupabase(contact),
+    submitToLawmatics(contact),
+  ]);
+}
+
+async function writeContactToSupabase({
   responseId, email, firstName, lastName, phone, message,
   supportFor, supportType, referralSource,
   ctaTier, consent,
 }) {
-  // 1) Write to Supabase — Warren owns this list regardless of Kit state.
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/parr_contacts`, {
       method: 'POST',
@@ -99,24 +127,48 @@ export async function captureContact({
   } catch (err) {
     console.error('parr_contacts insert error', err);
   }
+}
 
-  // 2) Kit handoff — only if a form ID is configured for this tier.
-  const formId = KIT_FORM_IDS[ctaTier];
-  if (formId) {
-    const body = new URLSearchParams({
-      email_address: email,
-      first_name: firstName || '',
+// POST a submission to Steve's existing Lawmatics intake form so the lead
+// lands in the same intake queue his assistant uses for parrbusinesslaw.com.
+async function submitToLawmatics({
+  email, firstName, lastName, phone, message,
+  supportFor, supportType, referralSource,
+  consent,
+}) {
+  const payload = {
+    first_name: firstName,
+    last_name:  lastName,
+    email,
+    phone:      phone || '',
+    custom_field_583330: LAWMATICS_SUPPORT_FOR[supportFor],
+    custom_field_536359: LAWMATICS_SUPPORT_TYPE[supportType],
+    custom_field_635407: message,
+    custom_field_635773: LAWMATICS_REFERRAL_SOURCE[referralSource],
+    general_field_49fe:  !!consent,
+  };
+
+  // Conditional fields. Lawmatics requires these keys in EVERY payload,
+  // even when the trigger value isn't selected — empty string is the
+  // expected "no value" sentinel. (Confirmed via 422 response on a test
+  // submission without them.)
+  payload.custom_field_546946 = referralSource === 'current_client_referral'
+    ? '(Lead captured via BC Estate Exposure Profile)'
+    : '';
+  payload.custom_field_750529 = supportType === 'other'
+    ? 'See message field for details'
+    : '';
+
+  try {
+    const res = await fetch(LAWMATICS_SUBMIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
     });
-    try {
-      // Kit's public form endpoint accepts cross-origin form submissions.
-      await fetch(`https://app.kit.com/forms/${formId}/subscriptions`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body,
-        mode: 'no-cors', // public endpoint; we don't need to read the response
-      });
-    } catch (err) {
-      console.error('kit subscribe error', err);
+    if (!res.ok) {
+      console.error('lawmatics submit failed', res.status, await res.text());
     }
+  } catch (err) {
+    console.error('lawmatics submit error', err);
   }
 }
